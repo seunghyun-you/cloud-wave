@@ -47,7 +47,6 @@ def side_bar():
         #         st.rerun()
     return selected_page
 
-
 def main():
     if st.session_state['logged_in'] == True:
         selected_page = side_bar()
