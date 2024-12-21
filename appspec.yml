@@ -8,5 +8,6 @@ file_exists_behavior: OVERWRITE
 hooks:
   ApplicationStop:
     - location: scripts/stop_streamlit.sh
+      timeout: 10
   ApplicationStart:
     - location: scripts/start_streamlit.sh
