@@ -1,5 +1,6 @@
 #!/bin/bash
 
+
 terminate_process() {
   local PIDS=$1
   local NAME=$2
