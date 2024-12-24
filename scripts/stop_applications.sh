@@ -3,10 +3,13 @@
 terminate_process() {
   local PIDS=$1
   local NAME=$2
+  local NOW=$(date "+%Y %b %d %a %H:%M:%S")
+  local STOP_LOG="/var/log/CodeDeploy_$NAME.log"
 
   if [ -z "$PIDS" ]; then
-    echo "$NAME is not running"
+    echo "[$NOW] $NAME is not running"
   else
+    echo "[$NOW] 기존 프로세스 종료 시도: PID $PIDS" >> $STOP_LOG
     for PID in $PIDS; do
       echo "Kill -9 $PID ($NAME)"
       kill -9 $PID
