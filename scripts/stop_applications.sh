@@ -4,7 +4,7 @@ terminate_process() {
   local PIDS=$1
   local NAME=$2
   local NOW=$(date "+%Y %b %d %a %H:%M:%S")
-  local STOP_LOG="/var/log/CodeDeploy_$NAME.log"
+  local STOP_LOG="/var/log/codedeploy_$NAME.log"
 
   if [ -z "$PIDS" ]; then
     echo "[$NOW] $NAME is not running"
@@ -23,8 +23,8 @@ APP_PID=$(pgrep streamlit)
 FLASK_PIDS=$(pgrep -f "python app.py")
 
 # Terminate processes
-terminate_process "$APP_PID" "Streamlit"
-terminate_process "$FLASK_PIDS" "Flask"
+terminate_process "$APP_PID" "streamlit"
+terminate_process "$FLASK_PIDS" "flask"
 
 sleep 5
 exit 0
