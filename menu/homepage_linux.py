@@ -122,6 +122,10 @@ class Homepage:
         # st.table(df)
         
         # AutoScaling Group에서 인스턴스 목록 가져오기
+        token = self.get_token()
+        region = self.get_instance_metadata(token, "placement/region")
+        ec2_client = boto3.client('ec2', region_name=region)
+        autoscaling_client = boto3.client('autoscaling', region_name=region)
         asg_name = "lab-edu-asg-web"
         try:
             asg_response = autoscaling_client.describe_auto_scaling_groups(
