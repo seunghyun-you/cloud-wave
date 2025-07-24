@@ -74,7 +74,7 @@ class Homepage:
             time.sleep(1)
 
     def homepage(self):
-        st.title("AWS EC2 Information")
+        st.title("AWS AutoScalingGroup EC2 Information")
         # Monitoring and Load Button ----------
         col1, col2, col3 = st.columns([1, 1, 8])
         with col1:

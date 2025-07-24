@@ -21,7 +21,7 @@ terminate_process() {
 
 # Find PIDs
 APP_PID=$(pgrep streamlit)
-FLASK_PIDS=$(pgrep -f "python app.py")
+FLASK_PIDS=$(pgrep -f "python.*app.py")
 
 # Terminate processes
 terminate_process "$APP_PID" "streamlit"
