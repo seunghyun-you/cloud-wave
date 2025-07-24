@@ -127,6 +127,8 @@ class Homepage:
         ec2_client = boto3.client('ec2', region_name=region)
         autoscaling_client = boto3.client('autoscaling', region_name=region)
         asg_name = "lab-edu-asg-web"
+            
+        instances_info = []
         try:
             asg_response = autoscaling_client.describe_auto_scaling_groups(
                 AutoScalingGroupNames=[asg_name]
@@ -146,8 +148,6 @@ class Homepage:
             
             # EC2 인스턴스 세부 정보 가져오기
             ec2_response = ec2_client.describe_instances(InstanceIds=instance_ids)
-            
-            instances_info = []
             
             for reservation in ec2_response['Reservations']:
                 for instance in reservation['Instances']:
@@ -204,21 +204,24 @@ class Homepage:
         st.header('Storage Information Table', divider = "gray")
         
         # GET EBS Information TABLE format
-        volumes = ec2_client.describe_volumes(Filters=[{'Name': 'attachment.instance-id', 'Values': [instance_id]}])
-        volume_data = []
-        for volume in volumes['Volumes']:
-            # volume_metadata_info = {}
-            volume_data.append({
-                'Instance ID': instance_id,
-                'Volume ID': volume['VolumeId'],
-                'Type': volume['VolumeType'],
-                'Size (GB)': volume['Size'],
-                'State': volume['State'],
-                'Snapshot ID': volume.get('SnapshotId', 'N/A'),
-                'IOPS': volume.get('Iops', 'N/A'),
-                'Encrypted': volume['Encrypted'],
-                'Creation Date': volume['CreateTime'].strftime('%Y-%m-%d %H:%M:%S')
-            })
+        for instance_info in instances_info:
+            instance_id = instance_info['Instance ID']
+            volumes = ec2_client.describe_volumes(Filters=[{'Name': 'attachment.instance-id', 'Values': [instance_id]}])
+            volume_data = []
+            for volume in volumes['Volumes']:
+                # volume_metadata_info = {}
+                volume_data.append({
+                    'Instance ID': instance_id,
+                    'Volume ID': volume['VolumeId'],
+                    'Type': volume['VolumeType'],
+                    'Size (GB)': volume['Size'],
+                    'State': volume['State'],
+                    'Snapshot ID': volume.get('SnapshotId', 'N/A'),
+                    'IOPS': volume.get('Iops', 'N/A'),
+                    'Encrypted': volume['Encrypted'],
+                    'Creation Date': volume['CreateTime'].strftime('%Y-%m-%d %H:%M:%S')
+                })
+                
         st.table(volume_data)
 
         with placeholder_button.container():

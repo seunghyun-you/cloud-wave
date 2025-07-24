@@ -187,3 +187,13 @@ systemctl restart backend.service
             df = pd.DataFrame(list(metadata_info.items()), columns=['Metadata', 'Value'])
             st.table(df)
 ```
+
+- code deploy 배포 그룹 추가 (lab-edu-cd-deploygroup-asg)
+
+  - 배포 그룹 이름 : lab-edu-cd-deploygroup-asg
+  - 서비스 역할 : ***********lab-edu-role-codedeploy
+  - 환경 구성 : Amazon EC2 Auto Scaling 그룹
+  - Auto Scaling Group : lab-edu-asg-web
+  - 배포 구성 : CodeDeployDefault.AllAtOnce
+
+  
