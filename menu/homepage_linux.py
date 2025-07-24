@@ -93,7 +93,7 @@ class Homepage:
             
             
         # EC2 Information area --------------------------------
-        st.header('EC2 Instance Information', divider = "gray")
+        st.header('AutoScalingGroup Instance Information', divider = "gray")
         
         # GET EC2 Instance Information TABLE format
         token = self.get_token()

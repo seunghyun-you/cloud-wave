@@ -2,13 +2,61 @@
 
 ## Auto Scaling Group 
 
-- streamlit, Flask auto start script (/etc/rc.c/rc.local)
+- streamlit, Flask 실행 명령 주석처리 (/etc/rc.c/rc.local)
 
-  ```bash
-  #!/bin/bash
-  streamlit run /root/streamlit-project/main.py --server.port 80 > /dev/null 2> /dev/null < /dev/null &
-  python /root/streamlit-project/backend/app.py > /dev/null 2> /dev/null < /dev/null &
-  ```
+```bash
+#!/bin/bash
+# streamlit run /root/streamlit-project/main.py --server.port 80 > /dev/null 2> /dev/null < /dev/null &
+# python /root/streamlit-project/backend/app.py > /dev/null 2> /dev/null < /dev/null &
+```
+
+- systemd 등록
+
+```bash
+# /etc/systemd/system/streamlit.service
+[Unit]
+Description=Run main.py on server boot
+After=network.target
+
+[Service]
+ExecStart=/usr/local/bin/streamlit run /root/streamlit-project/main.py --server.port 80
+WorkingDirectory=/root/streamlit-project
+Restart=always
+User=root
+StandardOutput=append:/var/log/streamlit.log
+StandardError=append:/var/log/streamlit.log
+
+[Install]
+WantedBy=multi-user.target
+```
+
+```bash
+# /etc/systemd/system/backend.service
+[Unit]
+Description=Run main.py on server boot
+After=network.target
+
+[Service]
+ExecStart=/usr/bin/python /root/streamlit-project/backend/app.py
+WorkingDirectory=/root/streamlit-project/backend
+Restart=always
+User=root
+StandardOutput=append:/var/log/backend.log
+StandardError=append:/var/log/backend.log
+
+[Install]
+WantedBy=multi-user.target
+```
+
+- service 실행
+
+```bash
+systemctl daemon-reload
+systemctl start streamlit.service
+systemctl start backend.service
+systemctl enable streamlit.service
+systemctl enable backend.service
+```
 
 - create ami (ec2-web)
 
@@ -22,4 +70,24 @@
 aws autoscaling start-instance-refresh \
     --auto-scaling-group-name lab-edu-asg-web \
     --preferences MinHealthyPercentage=50,InstanceWarmup=300
+```
+
+- code deploy 배포 설정 수정
+
+```bash
+# ApplicationStop 후크 주석처리
+hooks:
+  # ApplicationStop:
+  #   # - location: scripts/stop_streamlit.sh
+  #   - location: scripts/stop_applications.sh
+  #     timeout: 10
+```
+
+- start_application.sh 파일 수정
+
+```bash
+#!/bin/bash
+
+systemctl restart streamlit.service
+systemctl restart backend.service
 ```
