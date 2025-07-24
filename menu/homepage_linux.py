@@ -95,32 +95,6 @@ class Homepage:
         # EC2 Information area --------------------------------
         st.header('AutoScalingGroup Instance Information', divider = "gray")
         
-        # # GET EC2 Instance Information TABLE format
-        # token = self.get_token()
-        # region = self.get_instance_metadata(token, "placement/region")
-        # ec2_client = boto3.client('ec2', region_name=region)
-        # instance_id = self.get_instance_metadata(token, "instance-id")
-        # name_tag = self.get_instance_name_tag(ec2_client, instance_id)
-        # metadata_info = {
-        #     "Name": name_tag,
-        #     "Instance ID": self.get_instance_metadata(token, "instance-id"),
-        #     "Instance Type": self.get_instance_metadata(token, "instance-type"),
-        #     "Region": region,
-        #     "Availability Zone": self.get_instance_metadata(token, "placement/availability-zone"),
-        #     "Private IP": self.get_instance_metadata(token, "local-ipv4"),
-        #     "Public IP": self.get_instance_metadata(token, "public-ipv4"),
-        # }
-        # # GET EC2 Instance Information TEXT format
-        # instance_id=self.get_instance_metadata(token, "instance-id")
-        # instance_type=self.get_instance_metadata(token, "instance-type")
-        # instance_region=self.get_instance_metadata(token, "placement/region")
-        # instance_availability_zone=self.get_instance_metadata(token, "placement/availability-zone")
-        # instance_private_ip=self.get_instance_metadata(token, "local-ipv4")
-        # instance_public_ip=self.get_instance_metadata(token, "public-ipv4")
-        # instance_name = self.get_instance_name_tag(ec2_client, instance_id)
-        # df = pd.DataFrame(list(metadata_info.items()), columns=['Metadata', 'Value'])
-        # st.table(df)
-        
         # AutoScaling Group에서 인스턴스 목록 가져오기
         token = self.get_token()
         region = self.get_instance_metadata(token, "placement/region")
@@ -135,7 +109,7 @@ class Homepage:
             )
             
             if not asg_response['AutoScalingGroups']:
-                st.error(f"AutoScaling Group '{asg_name}'을 찾을 수 없습니다.")
+                st.error(f"Unable to retrieve instance information.")
                 return
             
             # ASG의 인스턴스 ID 목록 추출
@@ -143,7 +117,7 @@ class Homepage:
             instance_ids = [instance['InstanceId'] for instance in asg_instances if instance['LifecycleState'] == 'InService']
             
             if not instance_ids:
-                st.warning(f"AutoScaling Group '{asg_name}'에 실행 중인 인스턴스가 없습니다.")
+                st.warning(f"Unable to retrieve instance information.")
                 return
             
             # EC2 인스턴스 세부 정보 가져오기
@@ -151,7 +125,6 @@ class Homepage:
             
             for reservation in ec2_response['Reservations']:
                 for instance in reservation['Instances']:
-                    # 인스턴스 이름 태그 찾기
                     instance_name = "N/A"
                     if 'Tags' in instance:
                         for tag in instance['Tags']:
@@ -176,15 +149,13 @@ class Homepage:
             if instances_info:
                 df = pd.DataFrame(instances_info)
                 st.subheader(f"EC2 Information Table: {asg_name}")
-                st.write(f"총 {len(instances_info)}개의 인스턴스")
                 st.table(df)
             else:
-                st.warning("인스턴스 정보를 가져올 수 없습니다.")
+                st.warning("Unable to retrieve instance information.")
 
         except Exception as e:
-            st.error(f"오류 발생: {str(e)}")
-            # fallback: 현재 인스턴스 정보만 표시
-            st.info("현재 인스턴스 정보로 대체합니다.")
+            st.error(f"Error Message: {str(e)}")
+            st.info("Replace with current instance information.")
             current_instance_id = self.get_instance_metadata(token, "instance-id")
             name_tag = self.get_instance_name_tag(ec2_client, current_instance_id)
             metadata_info = {
