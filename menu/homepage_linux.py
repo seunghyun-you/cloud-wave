@@ -201,7 +201,7 @@ class Homepage:
         
 
         # EBS Volume Information area --------------------------
-        st.header('Storage Information Table', divider = "gray")
+        st.subheader('Storage Information Table', divider = "gray")
         
         # GET EBS Information TABLE format
         for instance_info in instances_info:
