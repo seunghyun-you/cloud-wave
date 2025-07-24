@@ -201,13 +201,13 @@ class Homepage:
         
 
         # EBS Volume Information area --------------------------
-        st.subheader('EBS Information Table: {asg_name}')
+        st.subheader(f'EBS Information Table: {asg_name}')
         
         # GET EBS Information TABLE format
+        volume_data = []
         for instance_info in instances_info:
             instance_id = instance_info['Instance ID']
             volumes = ec2_client.describe_volumes(Filters=[{'Name': 'attachment.instance-id', 'Values': [instance_id]}])
-            volume_data = []
             for volume in volumes['Volumes']:
                 # volume_metadata_info = {}
                 volume_data.append({
@@ -221,7 +221,6 @@ class Homepage:
                     'Encrypted': volume['Encrypted'],
                     'Creation Date': volume['CreateTime'].strftime('%Y-%m-%d %H:%M:%S')
                 })
-                
         st.table(volume_data)
 
         with placeholder_button.container():
