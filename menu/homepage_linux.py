@@ -175,7 +175,7 @@ class Homepage:
             # DataFrame 생성 및 테이블 출력
             if instances_info:
                 df = pd.DataFrame(instances_info)
-                st.subheader(f"AutoScaling Group: {asg_name}")
+                st.subheader(f"EC2 Information Table: {asg_name}")
                 st.write(f"총 {len(instances_info)}개의 인스턴스")
                 st.table(df)
             else:
@@ -201,7 +201,7 @@ class Homepage:
         
 
         # EBS Volume Information area --------------------------
-        st.subheader('Storage Information Table', divider = "gray")
+        st.subheader('EBS Information Table: {asg_name}')
         
         # GET EBS Information TABLE format
         for instance_info in instances_info:
